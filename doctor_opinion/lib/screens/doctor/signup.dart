@@ -7,8 +7,10 @@ import 'package:doctor_opinion/widgets/doctor/customDropDown.dart';
 import 'package:doctor_opinion/widgets/doctor/email.dart';
 import 'package:doctor_opinion/widgets/doctor/phone.dart';
 import 'package:doctor_opinion/widgets/doctor/username.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:lottie/lottie.dart';
@@ -50,7 +52,7 @@ class _SignUpPage extends ConsumerState<doctorSignUpPage> {
     BasicDetails(
       setPointer: setPointer,
     ),
-    Singlefilepicker(),
+    // Singlefilepicker(),
     EducationalDetails(
       setPointer: setPointer,
     ),
@@ -69,6 +71,13 @@ class _SignUpPage extends ConsumerState<doctorSignUpPage> {
                 .headlineLarge!
                 .copyWith(color: Theme.of(context).colorScheme.onPrimary),
           ),
+          leading: _pointer > 0
+              ? IconButton(
+                  onPressed: () {
+                    setPointer(_pointer - 1);
+                  },
+                  icon: Icon(Icons.arrow_back))
+              : null,
         ),
         body: screens[_pointer]);
   }
@@ -312,29 +321,33 @@ class EducationalDetails extends ConsumerStatefulWidget {
 }
 
 class _EducationalDetails extends ConsumerState<EducationalDetails> {
+  void upadateState() {
+    setState(() {});
+  }
+
   bool search = false;
   List<String> data = [];
   Widget build(context) {
     return Scaffold(
-      appBar: AppBar(
-        // centerTitle: true,
-        title: Row(
-          children: [
-            IconButton(
-                onPressed: () {
-                  widget.setPointer(1);
-                },
-                icon: const Icon(Icons.arrow_back)),
-            Image.asset(
-              'assets/test.png',
-              width: 80,
-              height: 50,
-            ),
-            const Text("Education/specialization"),
-          ],
-        ),
-        automaticallyImplyLeading: false,
-      ),
+      // appBar: AppBar(
+      //   // centerTitle: true,
+      //   title: Row(
+      //     children: [
+      //       IconButton(
+      //           onPressed: () {
+      //             widget.setPointer(1);
+      //           },
+      //           icon: const Icon(Icons.arrow_back)),
+      //       Image.asset(
+      //         'assets/test.png',
+      //         width: 80,
+      //         height: 50,
+      //       ),
+      //       const Text("Education/specialization"),
+      //     ],
+      //   ),
+      //   automaticallyImplyLeading: false,
+      // ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -342,8 +355,6 @@ class _EducationalDetails extends ConsumerState<EducationalDetails> {
               padding: EdgeInsets.all(8.0),
               child: TextFormField(
                 onChanged: (v) {
-                  print("v is");
-                  print(v);
                   setState(() {
                     if (v.isEmpty || v == "") {
                       search = false;
@@ -357,8 +368,6 @@ class _EducationalDetails extends ConsumerState<EducationalDetails> {
                   // ref.refresh(DropDownProvider);
                 },
                 decoration: new InputDecoration(
-                  // border: OutlineInputBorder(
-                  //     borderRadius: BorderRadius.circular(25)),
                   suffix: Icon(Icons.search),
                   labelText: "Search your degree",
                   disabledBorder: OutlineInputBorder(
@@ -397,9 +406,10 @@ class _EducationalDetails extends ConsumerState<EducationalDetails> {
                             child: Container(
                                 height:
                                     MediaQuery.of(context).size.height * 0.7,
-                                child: selectedDegree(context)),
+                                child: selectedDegree(context, upadateState)),
                           ),
-                  )
+                  ),
+            FilledButton(onPressed: () {}, child: Text("Submit"))
             // Padding(
             //   padding: const EdgeInsets.all(12.0),
             //   child: Container(
@@ -422,29 +432,134 @@ class Achivements extends StatelessWidget {
   }
 }
 
-Widget selectedDegree(context) {
+Widget selectedDegree(context, Function updateState) {
   List<Widget> data = [];
   selectedMedicalDegreesAndSpecializations.forEach((key, value) {
     value.forEach((v) {
+      print(v);
       data.add(Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 1),
-        child: ListTile(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          tileColor: Theme.of(context).focusColor,
-          title: Text(
-            key,
-            style: Theme.of(context).textTheme.labelLarge,
+        child: Card(
+            child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 150,
+                  child: Card(
+                    // color: value[i].entries.first.value == null
+                    //     ? ThemerrorContainere.of(context).colorScheme.
+                    //     : null,
+                    elevation: 12,
+                    child: Column(
+                      children: [
+                        v.entries.first.value == null
+                            ? Image.asset(
+                                height: 115,
+                                "assets/pdf-file.png",
+                                width: MediaQuery.of(context).size.width * 0.2,
+                              )
+                            : Container(
+                                height: 115,
+                                width: MediaQuery.of(context).size.width * 0.2,
+                                color: Colors.amber,
+                                child: PDFView(
+                                  filePath: v.entries.first.value!.path,
+                                  enableSwipe: false,
+                                  swipeHorizontal: true,
+                                  autoSpacing: false,
+                                  pageFling: true,
+                                  onRender: (_pages) {
+                                    updateState();
+                                  },
+                                  onError: (error) {
+                                    print(error.toString());
+                                  },
+                                  onPageError: (page, error) {
+                                    print('$page: ${error.toString()}');
+                                  },
+                                  onViewCreated:
+                                      (PDFViewController pdfViewController) {},
+                                ),
+                              ),
+                        v.entries.first.value == null
+                            ? const Text("Not upload")
+                            : const Text("Uploaded")
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  // color: Colors.amber,
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          key,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          v.entries.first.key,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.titleSmall,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                      Row(
+                        children: [
+                          Spacer(),
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: FilledButton(
+                              child: Text("upload"),
+                              onPressed: () async {
+                                PlatformFile? file = await picksinglefile();
+                                if (file != null) {
+                                  v[v.entries.first.key] = File(file.path!);
+                                } else {
+                                  v[v.entries.first.key] = null;
+                                }
+                                updateState();
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
-          subtitle: Text(v.keys.toString()),
-          trailing: Column(
-            children: [Icon(Icons.add_to_photos), Text("Certificate")],
-          ),
-        ),
+        )),
       ));
     });
   });
   return ListView(
     children: data,
   );
+}
+
+Future<PlatformFile?> picksinglefile() async {
+  PlatformFile? file;
+  FilePickerResult? result = await FilePicker.platform
+      .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+  if (result != null) {
+    file = result.files.first;
+  }
+  return file;
 }
