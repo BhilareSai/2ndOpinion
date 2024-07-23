@@ -196,17 +196,18 @@ class _BasicDetailsState extends State<BasicDetails> {
                   child: Container(
                     child: imageLoading ? CircularProgressIndicator() : null,
                     decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primaryContainer,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                            width: 7, color: Theme.of(context).primaryColor),
-                        image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: _profileImage != null
-                                ? FileImage(
-                                    _profileImage!,
-                                  )
-                                : AssetImage("assets/doctorProfile.png"))),
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          width: 7, color: Theme.of(context).primaryColor),
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: _profileImage != null
+                            ? FileImage(_profileImage!) as ImageProvider<Object>
+                            : AssetImage("assets/doctorProfile.png")
+                                as ImageProvider<Object>,
+                      ),
+                    ),
                   ),
                 ),
               ),
