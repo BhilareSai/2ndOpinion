@@ -15,6 +15,7 @@ class _UserNameWidget extends State<UserNameWidget> {
   String _username = "";
   bool _vusername = false;
   Widget? status = null;
+  String? error = null;
   final _controller = TextEditingController();
   Widget build(context) {
     return Padding(
@@ -22,23 +23,31 @@ class _UserNameWidget extends State<UserNameWidget> {
       child: TextFormField(
         controller: _controller,
         onChanged: (username) async {
+          username = username.trim();
+          if (username.isEmpty) {
+            error = null;
+            status = null;
+            setState(() {});
+            return;
+          }
           if (username.isNotEmpty) {
             _username = username;
             setState(() {
               status = CircularProgressIndicator();
             });
             bool res = await DoctorRegisterationApi.validateUsername(username);
-            if (res == true) {
+            print(res);
+            if (res) {
               setState(() {
                 status = Icon(Icons.check);
-
+                error = null;
                 _vusername = res;
                 widget.vadliateUsername(username, res);
               });
             } else {
               setState(() {
                 status = Icon(Icons.close);
-
+                error = "username already exist";
                 _vusername = res;
 
                 widget.vadliateUsername(username, res);
@@ -47,13 +56,7 @@ class _UserNameWidget extends State<UserNameWidget> {
           }
         },
         decoration: InputDecoration(
-            errorText: _username.isEmpty
-                ? null
-                : _vusername
-                    ? "username already exist"
-                    : null,
-            label: const Text("username"),
-            suffix: status),
+            errorText: error, label: const Text("username"), suffix: status),
       ),
     );
   }

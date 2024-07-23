@@ -213,19 +213,21 @@ class LoginPage extends StatelessWidget {
         builder: (c) {
           return StatefulBuilder(builder: (c, setState) {
             return AlertDialog(
-              title: Center(
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          "Join us as ?",
-                          style: Theme.of(context).primaryTextTheme.bodyLarge,
+              title: SingleChildScrollView(
+                child: Center(
+                    child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Theme.of(context).colorScheme.primary,
                         ),
-                      ))),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            "Join us as ?",
+                            style: Theme.of(context).primaryTextTheme.bodyLarge,
+                          ),
+                        ))),
+              ),
               content: SizedBox(
                 height: MediaQuery.of(context).size.height * 0.4,
                 child: Column(

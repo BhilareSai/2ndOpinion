@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class Singlefilepicker extends StatefulWidget {
   const Singlefilepicker({super.key});
@@ -20,6 +22,8 @@ class _SinglefilepickerState extends State<Singlefilepicker> {
     if (result != null) {
       setState(() {});
       file = result.files.first;
+      print("file is");
+      print(File(file!.path!));
     }
   }
 
@@ -49,7 +53,7 @@ class _SinglefilepickerState extends State<Singlefilepicker> {
                 ElevatedButton.icon(
                     onPressed: picksinglefile,
                     style: const ButtonStyle(
-                        backgroundColor: MaterialStatePropertyAll(
+                        backgroundColor: WidgetStatePropertyAll(
                             Color.fromARGB(255, 61, 186, 228))),
                     icon: const Icon(Icons.insert_drive_file_sharp),
                     label: const Text(
@@ -58,7 +62,27 @@ class _SinglefilepickerState extends State<Singlefilepicker> {
                     )),
                 file != null
                     ? Container(
-                        height: 200, color: Colors.amber, child: Text(""))
+                        height: 100,
+                        color: Colors.amber,
+                        child: PDFView(
+                          filePath: file!.path,
+                          enableSwipe: false,
+                          swipeHorizontal: true,
+                          autoSpacing: false,
+                          pageFling: true,
+                          onRender: (_pages) {
+                            setState(() {});
+                          },
+                          onError: (error) {
+                            print(error.toString());
+                          },
+                          onPageError: (page, error) {
+                            print('$page: ${error.toString()}');
+                          },
+                          onViewCreated:
+                              (PDFViewController pdfViewController) {},
+                        ),
+                      )
                     : SizedBox()
               ])),
         ));
