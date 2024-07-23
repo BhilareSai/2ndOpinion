@@ -1,6 +1,7 @@
 import 'package:doctor_opinion/router/NamedRoutes.dart';
 import 'package:doctor_opinion/screens/doctor/signup.dart';
 import 'package:doctor_opinion/screens/loginPage.dart';
+import 'package:doctor_opinion/screens/otpForm.dart';
 import 'package:doctor_opinion/screens/patient/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -12,7 +13,7 @@ class MyGoRouter {
       name: CommonRoutes.login,
       pageBuilder: (context, state) {
         // return MaterialPage(child: LoginPage());
-        return MaterialPage(child: HomePage());
+        return MaterialPage(child: OtpFormPage());
       },
     ),
     GoRoute(
